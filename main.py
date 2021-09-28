@@ -10,21 +10,14 @@ if __name__ == '__main__':
     import requests
 
     # директория извлечения файлов архива
-    directory_to_extract_to = 'C:\\Users\\Altryd\\Downloads\\lab1_python_borisychev'
+    directory_to_extract_to = 'C:\\Users\\Altryd\\Downloads\\lab1_python_borisychev_'
 
-    """
     arch_file = 'C:\\Users\\Altryd\\Downloads\\tiff-4.2.0_lab1.zip'  # путь к архиву
-    os.mkdir("C:\\Users\\Altryd\\Downloads\\lab1_python_borisychev")
+    os.mkdir("C:\\Users\\Altryd\\Downloads\\lab1_python_borisychev_")
     needed_zip_file = zipfile.ZipFile(arch_file)
     needed_zip_file.extractall(directory_to_extract_to)
     needed_zip_file.close()
 
-    # Получаем абсолютный путь до ЭТОГО Jupyter Notebook
-    notebook_path = os.path.abspath("1lab.ipynb")
-    # Получаем путь до файла test_text.txt, находящегося в той же директории
-    test_text = os.path.join(os.path.dirname(notebook_path), "test_text.txt")
-    print(test_text)
-    """
     # Задание №2.1
     # Получить список файлов (полный путь) формата txt,
     # находящихся в directory_to_extract_to. Сохранить полученный список в txt_files
@@ -33,14 +26,11 @@ if __name__ == '__main__':
         for file in files:
             if file.endswith(".txt"):
                 txt_files.append(os.path.join(root, file))
-    # for text_file in txt_files:
-        # print(text_file, end="\n")
-    print(end="\n\n")
+
     for file in txt_files:
         target_file_data = open(file, 'rb').read()
         result = hashlib.md5(target_file_data).hexdigest()
-        print(result)
-    print(end="\n\n")
+
     target_hash = "4636f9ae9fef12ebd56cd39586d33cfb"
     target_file = ''  # полный путь к искомому файлу
     target_file_data = ''  # содержимое искомого файла
@@ -67,25 +57,15 @@ if __name__ == '__main__':
 
     # Получение списка строк таблицы
     lines = re.findall(r'<div class="Table-module_row__3TH83">.*?</div>.*?</div>.*?</div>.*?</div>.*?</div>', r.text)
-    # print(lines)
-
-
+    headers = []
     for line in lines:
         # извлечение заголовков таблицы
         if counter == 0:
             # Удаление тегов
-            #cleanr = re.compile('<.*?>')
-            #headers = re.sub(cleanr, '!', line)
-            # Извлечение списка заголовков
-            #headers = re.findall("[А-я]+\s?", headers)
-            #headers[-2] = headers[-2] + headers[-1]
-            #headers.__delitem__(-1)
-            headers = re.findall('([А-Яа-я]+ ?[А-Яа-я]*)+',line)
-            print(headers)
+            headers = re.findall('([А-Яа-я]+ ?[А-Яа-я]*)+', line)
+            assert headers.__len__() == 4
             counter += 1
             continue
-
-            # TODO
         # Удаление тегов
         temp = re.sub('<.*?>', ';', line)
         # Значения в таблице, заключенные в скобках, не учитывать. Для этого удалить скобки и символы между ними.
@@ -137,62 +117,6 @@ if __name__ == '__main__':
     # Вывод данных на экран для указанного первичного ключа (первый столбец таблицы)
     target_country = input("Введите название страны: ")
     print(result_dct.__getitem__(target_country))
-    """
-    #задание1
-    a = [1, 2, 5, 10, 15]
-    b = [11, 22, 33, 66, 99]
-    # for i in range(len(a)):
-    # print(a[i],b[i])
-
-    zipped_values = zip(a, b)
-    zipped_list = list(zipped_values)
-
-    print(zipped_list)
-    print(type(zipped_list))
-    print(type(zipped_list[0]))
-
-    #задание 2
-    testing = "авава"
-    is_palindrome = True
-    for i in range(len(testing)):
-        if testing[i] != testing[len(testing)-1-i]:
-            is_palindrome = False
-    print("палиндром" if is_palindrome else "нет")
-
-    #задание 2 вариант через другое
-    a = "мадам"
-    a == a[::-1]
-
-    #задание 3
-    seconds = int(input())
-    days = seconds // 86400
-    seconds %= 86400
-    hours = seconds // (86400/24)
-    seconds %= (86400/24)
-    minutes = seconds // (86400/24/60)
-    seconds %= (86400/24/60)
-    print(days, hours, minutes, seconds, sep=' : ')
-
-    #задание 9
-    list_comprehensions = [i for i in range(100)]
-    print (list_comprehensions)
-    """
-    """
-    array = ['agfkd.,f', 'Qksdf;sb&..', 'asdoo*', 'bgf...d', 're54()kj[]].']
-    counting_points = [array[i].count('.') for i in range(len(array))]
-    print(counting_points)
-
-    array_with_two_and_more_points = [array[i].count('.') if array[i].count('.')>=2  for i in range(len(array) )]
-    N = int(input())
-    A = [True]*(N+1)
-    A[0] = A[1] = False
-    for k in range(2, N):
-        if A[k]:
-            for m in range(2*k, N+1, k):
-                A[m] = False
-    print(A[N])
-    print(A)
-    """
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
