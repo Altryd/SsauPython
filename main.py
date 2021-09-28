@@ -30,6 +30,7 @@ if __name__ == '__main__':
     for file in txt_files:
         target_file_data = open(file, 'rb').read()
         result = hashlib.md5(target_file_data).hexdigest()
+        print("filename:\t", file, "\thash:", result)
 
     target_hash = "4636f9ae9fef12ebd56cd39586d33cfb"
     target_file = ''  # полный путь к искомому файлу
@@ -106,9 +107,20 @@ if __name__ == '__main__':
     # Задание №5
     # Запись данных из полученного словаря в файл
     output = open('C:\\Users\\Altryd\\Downloads\\lab1_python_borisychev\\data.csv', 'w')
+    counter = 0
+    headers_string = ''
+    headers_string = ';'.join(headers)
     for key in result_dct.keys():
-        output.write(key)
-        output.write(result_dct[key].__str__())
+        if counter == 0:
+            headers_string = "Название страны;" + headers_string
+            output.write(headers_string)
+            output.write('\n')
+            counter += 1
+        output.write(key+';')
+        col_values_string = ""
+        for i in range(0, 4):
+            col_values_string = col_values_string + str(result_dct[key][headers[i]]) + ';'
+        output.write(col_values_string)
         output.write('\n')
 
     output.close()
