@@ -108,7 +108,6 @@ if __name__ == '__main__':
     # Запись данных из полученного словаря в файл
     output = open('C:\\Users\\Altryd\\Downloads\\lab1_python_borisychev\\data.csv', 'w')
     counter = 0
-    headers_string = ''
     headers_string = ';'.join(headers)
     for key in result_dct.keys():
         if counter == 0:
