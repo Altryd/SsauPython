@@ -14,6 +14,7 @@ class File:
     __data : list
         Содержит список считанных данных из текстового файла
     """
+
     def __init__(self, filepath: str) -> None:
         """
         Инициализирует класс данных, считанных из файла
@@ -103,8 +104,17 @@ class Validator:
     _invalid_worldview = 0
     _invalid_address = 0
 
-    def __init__(self, email: str, height: str, snils: str, passport_number: str, occupation: str,
-                 age: str, political_views: str, worldview: str, address: str) -> None:
+    def __init__(
+            self,
+            email: str,
+            height: str,
+            snils: str,
+            passport_number: str,
+            occupation: str,
+            age: str,
+            political_views: str,
+            worldview: str,
+            address: str) -> None:
         """
         Инициализирует объект класса Validator для последующих проверок в методах
         Parameters:
@@ -312,26 +322,37 @@ class Validator:
         """
         print("\tОбщая статистика о валидации:")
         print(f"Верных записей: {Validator._valid_records}")
-        print(f"Ошибочных записей: {Validator._processed_records-Validator._valid_records}")
+        print(
+            f"Ошибочных записей: {Validator._processed_records-Validator._valid_records}")
         print("\tСтатистика по ошибкам:")
         print(f"Ошибок в email: {Validator._invalid_email}")
         print(f"Ошибок в height: {Validator._invalid_height}")
         print(f"Ошибок в snils: {Validator._invalid_snils}")
-        print(f"Ошибок в passport_number: {Validator._invalid_passport_number}")
+        print(
+            f"Ошибок в passport_number: {Validator._invalid_passport_number}")
         print(f"Ошибок в occupation: {Validator._invalid_occupation}")
         print(f"Ошибок в age: {Validator._invalid_age}")
-        print(f"Ошибок в political_views: {Validator._invalid_political_views}")
+        print(
+            f"Ошибок в political_views: {Validator._invalid_political_views}")
         print(f"Ошибок в worldview: {Validator._invalid_worldview}")
         print(f"Ошибок в address: {Validator._invalid_address}")
 
 
 parser = argparse.ArgumentParser(description='validator.py')
-parser.add_argument('-i', '-input', type=str,
-                    help='Аргумент, указывающий путь к файлу, который требуется проверить на валидность',
-                    required=True, dest='file_input')
-parser.add_argument('-o', '-output', type=str,
-                    help='Аргумент, указывающий путь к файлу, в который требуется записать валидные данные',
-                    required=True, dest='file_output')
+parser.add_argument(
+    '-i',
+    '-input',
+    type=str,
+    help='Аргумент, указывающий путь к файлу, который требуется проверить на валидность',
+    required=True,
+    dest='file_input')
+parser.add_argument(
+    '-o',
+    '-output',
+    type=str,
+    help='Аргумент, указывающий путь к файлу, в который требуется записать валидные данные',
+    required=True,
+    dest='file_output')
 args = parser.parse_args()
 read_data_from = os.path.realpath(args.file_input)
 write_valid_data_to = os.path.realpath(args.file_output)
@@ -340,9 +361,17 @@ try:
     with tqdm(file.data, desc='Проверяем записи на соответствие критериям') as progressbar:
         with open(write_valid_data_to, mode='w') as write_to_file:
             for record in file.data:
-                validate = Validator(str(record['email']), str(record['height']), str(record['snils']),
-                                     str(record['passport_number']), str(record['occupation']), str(record['age']),
-                                     str(record['political_views']), str(record['worldview']), str(record['address']))
+                validate = Validator(
+                    str(
+                        record['email']), str(
+                        record['height']), str(
+                        record['snils']), str(
+                        record['passport_number']), str(
+                        record['occupation']), str(
+                            record['age']), str(
+                                record['political_views']), str(
+                                    record['worldview']), str(
+                                        record['address']))
                 if validate.statistic_is_record_correct():
                     write_to_file.write(str(record))
                     write_to_file.write('\n')
