@@ -1,5 +1,7 @@
 import json
 import re
+import os
+from tqdm import tqdm
 
 
 class File:
@@ -46,6 +48,8 @@ class Validator:
     ----------
     Class Attributes
     ----------
+    _processed_records:int
+        Содержит количество обработанных записей
     _valid_records:int
         Содержит количество правильных записей
     _invalid_email:int
@@ -89,6 +93,7 @@ class Validator:
         Содержит адрес
     """
 
+    _processed_records = 0
     _valid_records = 0
     _invalid_email = 0
     _invalid_height = 0
@@ -107,23 +112,23 @@ class Validator:
         Parameters:
         -----------
         :param email:str
-        email человека
+            email человека
         :param height:str
-        рост человека
+            рост человека
         :param snils:str
-        СНИЛС человека
+            СНИЛС человека
         :param passport_number:str
-        номер паспорта человека
+            номер паспорта человека
         :param occupation:str
-        Профессия человека
+            Профессия человека
         :param age:str
-        Возраст человека
+            Возраст человека
         :param political_views:str
-        Политические взгляды человека
+            Политические взгляды человека
         :param worldview:str
-        Мировоззрение человека
+            Мировоззрение человека
         :param address:str
-        Адрес человека
+            Адрес человека
         """
         self.__email = email
         self.__height = height
@@ -246,15 +251,23 @@ class Validator:
             return False
         return True
 
-    def is_record_correct(self) -> None:
+    def statistic_is_record_correct(self) -> bool:
         """
-        Проверяет полностью запись в объекте класса Validator, на корректность
+        Проверяет полностью запись в объекте класса Validator на корректность и обновляет статистику
+        о обработанных записях а также возвращает информацию о корректности записи
 
         В случае нахождения ошибки, соответствующий атрибут класса Validator увеличивается на 1
         После нахождения ошибки проверка сразу же завершается после увеличения атрибута
 
         В случае, если ошибок не найдено, атрибут класса Validator _valid_records увеличивается на 1
+
+        Во всех случаях атрибут класса Validator _processed_records увеличивается на 1
+        :return:
+            bool
+                True, если запись корректна
+                False, если в записи найдены ошибки
         """
+        Validator._processed_records += 1
         if not self.__is_email_correct():
             Validator._invalid_email += 1
         elif not self.__is_height_correct():
@@ -275,14 +288,34 @@ class Validator:
             Validator._invalid_address += 1
         else:
             Validator._valid_records += 1
+            return True
+        return False
+
+    def is_record_correct(self) -> bool:
+        """
+        Проверяет полностью запись в объекте класса Validator на корректность
+        -----------
+        :return:
+            bool
+                True, если запись корректна
+                False, если в записи найдены ошибки
+        """
+        if (self.__is_email_correct() and self.__is_height_correct() and self.__is_snils_correct() and
+                self.__is_passport_number_correct() and self.__is_occupation_correct() and
+                self.__is_age_correct() and self.__is_political_views_correct() and self.__is_worldview_correct() and
+                self.__is_address_correct()):
+            return True
+        return False
 
     @staticmethod
     def print_statistics() -> None:
         """
         Выводит статистику о правильных записях и найденных ошибках
         """
-        print("Статистика о валидации:")
+        print("\tОбщая статистика о валидации:")
         print(f"Верных записей: {Validator._valid_records}")
+        print(f"Ошибочных записей: {Validator._processed_records-Validator._valid_records}")
+        print("\tСтатистика по ошибкам:")
         print(f"Ошибок в email: {Validator._invalid_email}")
         print(f"Ошибок в height: {Validator._invalid_height}")
         print(f"Ошибок в snils: {Validator._invalid_snils}")
@@ -294,10 +327,19 @@ class Validator:
         print(f"Ошибок в address: {Validator._invalid_address}")
 
 
-file = File("C:\\Users\\Altryd\\Downloads\\91.txt")
-for record in file.data:
-    validate = Validator(str(record['email']), str(record['height']), str(record['snils']),
-                         str(record['passport_number']), str(record['occupation']), str(record['age']),
-                         str(record['political_views']), str(record['worldview']), str(record['address']))
-    validate.is_record_correct()
+working_dir = os.getcwd()
+read_data_from = os.path.join(working_dir, '91.txt')
+write_valid_data_to = os.path.join(working_dir, 'valid.txt')
+file = File(read_data_from)
+
+with tqdm(file.data, desc='Проверяем записи на соответствие критериям') as progressbar:
+    with open(write_valid_data_to, mode='w') as write_to_file:
+        for record in file.data:
+            validate = Validator(str(record['email']), str(record['height']), str(record['snils']),
+                                 str(record['passport_number']), str(record['occupation']), str(record['age']),
+                                 str(record['political_views']), str(record['worldview']), str(record['address']))
+            if validate.statistic_is_record_correct():
+                write_to_file.write(str(record))
+                write_to_file.write('\n')
+            progressbar.update(1)
 Validator.print_statistics()
