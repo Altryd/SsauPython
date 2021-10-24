@@ -2,6 +2,7 @@ import json
 import re
 import os
 from tqdm import tqdm
+import argparse
 
 
 class File:
@@ -22,11 +23,8 @@ class File:
           filepath: str
              Указывает путь к файлу с данными, которые необходиммо считать
         """
-        try:
-            with open(filepath, encoding='windows-1251') as path:
-                self.__data = json.load(path)
-        except BaseException:
-            print("Файл имеет неверный формат данных или файла по данному пути не найдено")
+        with open(filepath, encoding='windows-1251') as path:
+            self.__data = json.load(path)
 
     @property
     def data(self) -> list:
@@ -320,26 +318,35 @@ class Validator:
         print(f"Ошибок в height: {Validator._invalid_height}")
         print(f"Ошибок в snils: {Validator._invalid_snils}")
         print(f"Ошибок в passport_number: {Validator._invalid_passport_number}")
-        print(f"Ошибок в _invalid_occupation: {Validator._invalid_occupation}")
+        print(f"Ошибок в occupation: {Validator._invalid_occupation}")
         print(f"Ошибок в age: {Validator._invalid_age}")
         print(f"Ошибок в political_views: {Validator._invalid_political_views}")
         print(f"Ошибок в worldview: {Validator._invalid_worldview}")
         print(f"Ошибок в address: {Validator._invalid_address}")
 
 
-working_dir = os.getcwd()
-read_data_from = os.path.join(working_dir, '91.txt')
-write_valid_data_to = os.path.join(working_dir, 'valid.txt')
-file = File(read_data_from)
-
-with tqdm(file.data, desc='Проверяем записи на соответствие критериям') as progressbar:
-    with open(write_valid_data_to, mode='w') as write_to_file:
-        for record in file.data:
-            validate = Validator(str(record['email']), str(record['height']), str(record['snils']),
-                                 str(record['passport_number']), str(record['occupation']), str(record['age']),
-                                 str(record['political_views']), str(record['worldview']), str(record['address']))
-            if validate.statistic_is_record_correct():
-                write_to_file.write(str(record))
-                write_to_file.write('\n')
-            progressbar.update(1)
-Validator.print_statistics()
+parser = argparse.ArgumentParser(description='validator.py')
+parser.add_argument('-i', '-input', type=str,
+                    help='Аргумент, указывающий путь к файлу, который требуется проверить на валидность',
+                    required=True, dest='file_input')
+parser.add_argument('-o', '-output', type=str,
+                    help='Аргумент, указывающий путь к файлу, в который требуется записать валидные данные',
+                    required=True, dest='file_output')
+args = parser.parse_args()
+read_data_from = os.path.realpath(args.file_input)
+write_valid_data_to = os.path.realpath(args.file_output)
+try:
+    file = File(read_data_from)
+    with tqdm(file.data, desc='Проверяем записи на соответствие критериям') as progressbar:
+        with open(write_valid_data_to, mode='w') as write_to_file:
+            for record in file.data:
+                validate = Validator(str(record['email']), str(record['height']), str(record['snils']),
+                                     str(record['passport_number']), str(record['occupation']), str(record['age']),
+                                     str(record['political_views']), str(record['worldview']), str(record['address']))
+                if validate.statistic_is_record_correct():
+                    write_to_file.write(str(record))
+                    write_to_file.write('\n')
+                progressbar.update(1)
+    Validator.print_statistics()
+except BaseException:
+    print("Произошла ошибка, проверьте пути к файлам")
