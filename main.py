@@ -103,6 +103,11 @@ class Validator:
     _invalid_political_views = 0
     _invalid_worldview = 0
     _invalid_address = 0
+    world_view_dict = {}
+    political_views_dict = {}
+    occupation_dict = {}
+    count_of_all_records_in_dicts = 0
+    number_of_dict = 3
 
     def __init__(
             self,
@@ -147,6 +152,36 @@ class Validator:
         self.__political_views = political_views
         self.__worldview = worldview
         self.__address = address
+
+    def fill_political_views_dict(self) -> None:
+        if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__political_views) is None:
+            return
+        if self.__political_views in Validator.political_views_dict:
+            Validator.political_views_dict[self.__political_views] += 1
+            Validator.count_of_all_records_in_dicts += 1
+        else:
+            Validator.political_views_dict[self.__political_views] = 1
+            Validator.count_of_all_records_in_dicts += 1
+
+    def fill_world_view_dict(self) -> None:
+        if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__worldview) is None:
+            return
+        if self.__worldview in Validator.world_view_dict:
+            Validator.world_view_dict[self.__worldview] += 1
+            Validator.count_of_all_records_in_dicts += 1
+        else:
+            Validator.world_view_dict[self.__worldview] = 1
+            Validator.count_of_all_records_in_dicts += 1
+
+    def fill_occupation_view_dict(self) -> None:
+        if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__occupation) is None:
+            return
+        if self.__occupation in Validator.occupation_dict:
+            Validator.occupation_dict[self.__occupation] += 1
+            Validator.count_of_all_records_in_dicts += 1
+        else:
+            Validator.occupation_dict[self.__occupation] = 1
+            Validator.count_of_all_records_in_dicts += 1
 
     def __is_email_correct(self) -> bool:
         """
@@ -206,6 +241,9 @@ class Validator:
         """
         if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__occupation) is None:
             return False
+        if Validator.occupation_dict[self.__occupation] < (Validator.count_of_all_records_in_dicts /
+                                                           (700 * Validator.number_of_dict)):
+            return False
         return True
 
     def __is_age_correct(self) -> bool:
@@ -230,6 +268,9 @@ class Validator:
         """
         if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__political_views) is None:
             return False
+        if Validator.political_views_dict[self.__political_views] < (Validator.count_of_all_records_in_dicts /
+                                                                     (100*Validator.number_of_dict)):
+            return False
         return True
 
     def __is_worldview_correct(self) -> bool:
@@ -241,6 +282,9 @@ class Validator:
                 False, если worldview некорректен
         """
         if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__worldview) is None:
+            return False
+        if Validator.world_view_dict[self.__worldview] < (Validator.count_of_all_records_in_dicts /
+                                                          (100*Validator.number_of_dict)):
             return False
         return True
 
@@ -358,6 +402,24 @@ read_data_from = os.path.realpath(args.file_input)
 write_valid_data_to = os.path.realpath(args.file_output)
 try:
     file = File(read_data_from)
+    with tqdm(file.data, desc='Заполняем словари мировоззрений, политических взглядов, профессий') as progressbar:
+        with open(write_valid_data_to, mode='w', encoding='windows-1251') as write_to_file:
+            for record in file.data:
+                validate = Validator(
+                    str(
+                        record['email']), str(
+                        record['height']), str(
+                        record['snils']), str(
+                        record['passport_number']), str(
+                        record['occupation']), str(
+                            record['age']), str(
+                                record['political_views']), str(
+                                    record['worldview']), str(
+                                        record['address']))
+                validate.fill_political_views_dict()
+                validate.fill_world_view_dict()
+                validate.fill_occupation_view_dict()
+                progressbar.update(1)
     with tqdm(file.data, desc='Проверяем записи на соответствие критериям') as progressbar:
         with open(write_valid_data_to, mode='w', encoding='windows-1251') as write_to_file:
             for record in file.data:
@@ -377,5 +439,6 @@ try:
                     write_to_file.write('\n')
                 progressbar.update(1)
     Validator.print_statistics()
-except BaseException:
+except BaseException as ex:
+    print(ex)
     print("Произошла ошибка, проверьте пути к файлам")
