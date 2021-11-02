@@ -69,6 +69,22 @@ class Validator:
         Содержит количество записей с ошибкой в worldview
     _invalid_address:int
         Содержит количество записей с ошибкой в address
+    world_view_dict : dict
+        Словарь
+            Ключ - определенный worldview
+            Значение - количество записей с таким worldview
+    political_views_dict : dict
+        Словарь
+            Ключ - определенный political_view
+            Значение - количество записей с таким political_view
+    occupation_dict : dict
+        Словарь
+            Ключ - определенный occupation
+            Значение - количество записей с таким occupation
+    count_of_all_records_in_dicts : int
+        Количество всех записей во всех словарях (сумма значений во всех словарях)
+    number_of_dict : int
+        Количество словарей
     ----------
     Object Attributes
     ----------
@@ -154,6 +170,11 @@ class Validator:
         self.__address = address
 
     def fill_political_views_dict(self) -> None:
+        """
+        Заполняет словарь political_views_dict
+            Если ключа с таким __political_views не найдено, добавляет пару (__political_views:1)
+            Если ключ найден, увеличивает значение на 1
+        """
         if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__political_views) is None:
             return
         if self.__political_views in Validator.political_views_dict:
@@ -164,6 +185,11 @@ class Validator:
             Validator.count_of_all_records_in_dicts += 1
 
     def fill_world_view_dict(self) -> None:
+        """
+        Заполняет словарь world_view_dict
+            Если ключа с таким __worldview не найдено, добавляет пару (__worldview:1)
+            Если ключ найден, увеличивает значение на 1
+        """
         if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__worldview) is None:
             return
         if self.__worldview in Validator.world_view_dict:
@@ -174,6 +200,11 @@ class Validator:
             Validator.count_of_all_records_in_dicts += 1
 
     def fill_occupation_view_dict(self) -> None:
+        """
+        Заполняет словарь occupation_dict
+            Если ключа с таким __occupation не найдено, добавляет пару (__occupation:1)
+            Если ключ найден, увеличивает значение на 1
+        """
         if re.match(r"^([А-яA-z]+[-]?\s?)+$", self.__occupation) is None:
             return
         if self.__occupation in Validator.occupation_dict:
@@ -234,6 +265,8 @@ class Validator:
     def __is_occupation_correct(self) -> bool:
         """
         Проверяет occupation, записанный в объекте класса Validator, на корректность
+        Корректность зависит от формы записи, а также от количества записей с таким occupation
+        Если таких записей меньше определенного процента, то профессия считается некорректной
         :return:
             bool
                 True, если occupation записан корректно
@@ -261,6 +294,8 @@ class Validator:
     def __is_political_views_correct(self) -> bool:
         """
         Проверяет political_views, записанный в объекте класса Validator, на корректность
+        Корректность зависит от формы записи, а также от количества записей с таким political_views
+        Если таких записей меньше определенного процента, то political_views считаются некорректным
         :return:
             bool
                 True, если political_views записан корректно
@@ -276,6 +311,8 @@ class Validator:
     def __is_worldview_correct(self) -> bool:
         """
         Проверяет worldview, записанный в объекте класса Validator, на корректность
+        Корректность зависит от формы записи, а также от количества записей с таким worldview
+        Если таких записей меньше определенного процента, то worldview считается некорректным
         :return:
             bool
                 True, если worldview записан корректно
