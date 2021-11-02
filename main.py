@@ -359,7 +359,7 @@ write_valid_data_to = os.path.realpath(args.file_output)
 try:
     file = File(read_data_from)
     with tqdm(file.data, desc='Проверяем записи на соответствие критериям') as progressbar:
-        with open(write_valid_data_to, mode='w') as write_to_file:
+        with open(write_valid_data_to, mode='w', encoding='windows-1251') as write_to_file:
             for record in file.data:
                 validate = Validator(
                     str(
