@@ -170,7 +170,7 @@ class Validator:
         """
         if re.match(r"^[0-9]+\.[0-9]+$", self.__height) is None:
             return False
-        return True
+        return 2.30 > float(self.__height) > 1.00
 
     def __is_snils_correct(self) -> bool:
         """
@@ -218,7 +218,7 @@ class Validator:
         """
         if re.match(r"^[0-9]{1,3}$", self.__age) is None:
             return False
-        return True
+        return 14 < int(self.__age) < 120
 
     def __is_political_views_correct(self) -> bool:
         """
