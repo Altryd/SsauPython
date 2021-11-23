@@ -90,15 +90,15 @@ class Validator:
     ----------
     __email : str
         Содержит email
-    __height : str
+    __height : float
         Содержит рост
     __snils : str
         Содержит номер СНИЛС
-    __passport_number : str
+    __passport_number : int
         Содержит номер паспорта
     __occupation : str
         Содержит профессию
-    age:str
+    age:int
         Содержит возраст
     political_views:str
         Содержит политические взгляды
@@ -160,11 +160,20 @@ class Validator:
             Адрес человека
         """
         self.__email = email
-        self.__height = height
+        try:
+            self.__height = float(height)
+        except ValueError:
+            self.__height = -1
         self.__snils = snils
-        self.__passport_number = passport_number
+        try:
+            self.__passport_number = int(passport_number)
+        except ValueError:
+            self.__passport_number = 0
         self.__occupation = occupation
-        self.__age = age
+        try:
+            self.__age = int(age)
+        except ValueError:
+            self.__age = -1
         self.__political_views = political_views
         self.__worldview = worldview
         self.__address = address
@@ -234,9 +243,9 @@ class Validator:
                 True, если height записан корректно
                 False, если height некорректен
         """
-        if re.match(r"^[0-9]+\.[0-9]+$", self.__height) is None:
+        if re.match(r"^[0-9]+\.[0-9]+$", str(self.__height)) is None:
             return False
-        return 2.30 > float(self.__height) > 1.00
+        return 2.30 > self.__height > 1.00
 
     def __is_snils_correct(self) -> bool:
         """
@@ -258,7 +267,7 @@ class Validator:
                 True, если passport_number записан корректно
                 False, если passport_number некорректен
         """
-        if re.match(r"^\d{6}$", self.__passport_number) is None:
+        if re.match(r"^\d{6}$", str(self.__passport_number)) is None:
             return False
         return True
 
@@ -287,9 +296,9 @@ class Validator:
                 True, если age записан корректно
                 False, если age некорректен
         """
-        if re.match(r"^[0-9]{1,3}$", self.__age) is None:
+        if re.match(r"^[0-9]{1,3}$", str(self.__age)) is None:
             return False
-        return 14 < int(self.__age) < 120
+        return 14 < self.__age < 120
 
     def __is_political_views_correct(self) -> bool:
         """
@@ -336,7 +345,7 @@ class Validator:
                 True, если address записан корректно
                 False, если address некорректен
         """
-        if re.match(r"^ул\.\s[\w .-]+\d+$", self.__address) is None:
+        if re.match(r"^[A-я.]+\s[\w .()-]+\d+$", self.__address) is None:
             return False
         return True
 
