@@ -3,6 +3,7 @@ import re
 import os
 from tqdm import tqdm
 import argparse
+import pickle
 
 
 class File:
@@ -177,6 +178,13 @@ class Validator:
         self.__political_views = political_views
         self.__worldview = worldview
         self.__address = address
+
+    def print_validator(self):
+        print(f"email : {self.__email}  , heigth: {self.__height}")
+        print(f"snils : {self.__snils}  , passport_number: {self.__passport_number}")
+        print(f"occupation: {self.__occupation} age: {self.__age}")
+        print(f"political_views: {self.__political_views} worldview: {self.__worldview}")
+        print(f"address: {self.__address}", end='\n\n')
 
     def fill_political_views_dict(self) -> None:
         """
@@ -466,8 +474,9 @@ try:
                 validate.fill_world_view_dict()
                 validate.fill_occupation_view_dict()
                 progressbar.update(1)
-    with tqdm(file.data, desc='Проверяем записи на соответствие критериям') as progressbar:
-        with open(write_valid_data_to, mode='w', encoding='windows-1251') as write_to_file:
+    data_to_save = []
+    with tqdm(file.data, desc='Проверяем записи на соответствие критериям и записываем их в файл') as progressbar:
+        with open(write_valid_data_to, mode='wb') as write_to_file:
             for record in file.data:
                 validate = Validator(
                     str(
@@ -481,9 +490,10 @@ try:
                                     record['worldview']), str(
                                         record['address']))
                 if validate.statistic_is_record_correct():
-                    write_to_file.write(str(record))
-                    write_to_file.write('\n')
+                    record['height'] = float(record['height'])
+                    data_to_save.append(record)
                 progressbar.update(1)
+            pickle.dump(data_to_save, write_to_file)
     Validator.print_statistics()
 except BaseException as ex:
     print(ex)
