@@ -4,7 +4,6 @@ import argparse
 import json
 
 import package_validate_and_sort.Validator_module
-from package_validate_and_sort import *
 from tqdm import tqdm
 
 
