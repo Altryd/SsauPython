@@ -6,11 +6,11 @@ from Validator import Validator
 from tqdm import tqdm
 
 
-def key_value(some_list):
+def key_value(some_list: list):
     return some_list[1]
 
 
-def height_value(some_dict):
+def height_value(some_dict: dict):
     return some_dict['height']
 
 
@@ -68,7 +68,7 @@ def serialize_validators_to_json(data_list: list, file: str) -> None:
         json.dump(data_to_serialize, fp, ensure_ascii=False, indent=1)
 
 
-def deserialize_validators_from_pickle(file) -> list:
+def deserialize_validators_from_pickle(file: str) -> list:
     with open(file, mode='rb') as read_from:
         data_deserialized = pickle.load(read_from)
         return data_deserialized
@@ -115,8 +115,8 @@ if __name__ == '__main__':
         serialize_validators_to_json(data_list=data, file=write_valid_data_to)
     except FileNotFoundError:
         print('Файл не найден, проверьте пути к файлам')
-    else:
+    except BaseException as ex:
+        print(ex)
         print('Неизвестная ошибка, повторите попытку, перед этим проверив пути к файлам и формат записей в них')
-# data = deserialize_validators(r"C:\Users\Altryd\PycharmProjects\FirstLab\serialized_validators.txt")
-# for elem in data:
-# elem.print_validator()
+    else:
+        print("Программа успешно завершена")
