@@ -1,8 +1,5 @@
 import pickle
-import os
-import argparse
 import json
-
 import package_validate_and_sort.Validator_module
 from tqdm import tqdm
 
@@ -74,51 +71,3 @@ def deserialize_validators_from_pickle(file: str) -> list:
     with open(file, mode='rb') as read_from:
         data_deserialized = pickle.load(read_from)
         return data_deserialized
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Sort.py')
-    parser.add_argument(
-        '-i',
-        '-input',
-        type=str,
-        help='Аргумент, указывающий путь к файлу, который требуется отсортировать',
-        required=True,
-        dest='file_input')
-    parser.add_argument(
-        '-o',
-        '-output',
-        type=str,
-        help='Аргумент, указывающий путь к файлу, в который требуется записать отсортированные данные',
-        required=True,
-        dest='file_output')
-    parser.add_argument(
-        '-c',
-        '-count',
-        type=int,
-        help='Аргумент, показывающий, сколько записей, начиная с начала нужно отсортировать и поместить в новый файл',
-        dest='count'
-    )
-    args = parser.parse_args()
-    read_data_from = os.path.realpath(args.file_input)
-    write_valid_data_to = os.path.realpath(args.file_output)
-    count = args.count
-
-    try:
-        data = read_valid_txt(read_data_from)
-        if count:
-            data = data[0:count]
-        data = insertion_sort(data, height_value)
-        serialize_validators_to_pickle(data, write_valid_data_to)
-        data = deserialize_validators_from_pickle(write_valid_data_to)
-        if write_valid_data_to.endswith('.txt'):
-            write_valid_data_to = write_valid_data_to.removesuffix('.txt')
-            write_valid_data_to = write_valid_data_to + '.json'
-        serialize_validators_to_json(data_list=data, file=write_valid_data_to)
-    except FileNotFoundError:
-        print('Файл не найден, проверьте пути к файлам')
-    except BaseException as ex:
-        print(ex)
-        print('Неизвестная ошибка, повторите попытку, перед этим проверив пути к файлам и формат записей в них')
-    else:
-        print("Программа успешно завершена")
