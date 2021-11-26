@@ -437,7 +437,7 @@ class Validator:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Validator.py')
+    parser = argparse.ArgumentParser(description='Validator_module.py')
     parser.add_argument(
         '-i',
         '-input',

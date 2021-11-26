@@ -2,7 +2,9 @@ import pickle
 import os
 import argparse
 import json
-from Validator import Validator
+
+import package_validate_and_sort.Validator_module
+from package_validate_and_sort import *
 from tqdm import tqdm
 
 
@@ -43,16 +45,17 @@ def serialize_validators_to_pickle(data_list: list, file: str) -> None:
     data_to_serialize = []
     with tqdm(data_list, desc='Сериализуем данные в файл') as progressbar:
         for i in range(0, len(data_list)):
-            elem = Validator(str(data_list[i]['email']),
-                             str(data_list[i]['height']),
-                             str(data_list[i]['snils']),
-                             str(data_list[i]['passport_number']),
-                             str(data_list[i]['occupation']),
-                             str(data_list[i]['age']),
-                             str(data_list[i]['political_views']),
-                             str(data_list[i]['worldview']),
-                             str(data_list[i]['address'])
-                             )
+            elem = package_validate_and_sort.Validator_module.Validator(
+                                                                        str(data_list[i]['email']),
+                                                                        str(data_list[i]['height']),
+                                                                        str(data_list[i]['snils']),
+                                                                        str(data_list[i]['passport_number']),
+                                                                        str(data_list[i]['occupation']),
+                                                                        str(data_list[i]['age']),
+                                                                        str(data_list[i]['political_views']),
+                                                                        str(data_list[i]['worldview']),
+                                                                        str(data_list[i]['address'])
+                                                                        )
             data_to_serialize.append(elem)
             progressbar.update(1)
     serialize_data_to_pickle(data_to_serialize, file)
