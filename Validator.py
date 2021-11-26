@@ -436,65 +436,66 @@ class Validator:
         print(f"Ошибок в address: {Validator._invalid_address}")
 
 
-parser = argparse.ArgumentParser(description='validator.py')
-parser.add_argument(
-    '-i',
-    '-input',
-    type=str,
-    help='Аргумент, указывающий путь к файлу, который требуется проверить на валидность',
-    required=True,
-    dest='file_input')
-parser.add_argument(
-    '-o',
-    '-output',
-    type=str,
-    help='Аргумент, указывающий путь к файлу, в который требуется записать валидные данные',
-    required=True,
-    dest='file_output')
-args = parser.parse_args()
-read_data_from = os.path.realpath(args.file_input)
-write_valid_data_to = os.path.realpath(args.file_output)
-try:
-    file = File(read_data_from)
-    with tqdm(file.data, desc='Заполняем словари мировоззрений, политических взглядов, профессий') as progressbar:
-        with open(write_valid_data_to, mode='w', encoding='windows-1251') as write_to_file:
-            for record in file.data:
-                validate = Validator(
-                    str(
-                        record['email']), str(
-                        record['height']), str(
-                        record['snils']), str(
-                        record['passport_number']), str(
-                        record['occupation']), str(
-                            record['age']), str(
-                                record['political_views']), str(
-                                    record['worldview']), str(
-                                        record['address']))
-                validate.fill_political_views_dict()
-                validate.fill_world_view_dict()
-                validate.fill_occupation_view_dict()
-                progressbar.update(1)
-    data_to_save = []
-    with tqdm(file.data, desc='Проверяем записи на соответствие критериям и записываем их в файл') as progressbar:
-        with open(write_valid_data_to, mode='wb') as write_to_file:
-            for record in file.data:
-                validate = Validator(
-                    str(
-                        record['email']), str(
-                        record['height']), str(
-                        record['snils']), str(
-                        record['passport_number']), str(
-                        record['occupation']), str(
-                            record['age']), str(
-                                record['political_views']), str(
-                                    record['worldview']), str(
-                                        record['address']))
-                if validate.statistic_is_record_correct():
-                    record['height'] = float(record['height'])
-                    data_to_save.append(record)
-                progressbar.update(1)
-            pickle.dump(data_to_save, write_to_file)
-    Validator.print_statistics()
-except BaseException as ex:
-    print(ex)
-    print("Произошла ошибка, проверьте пути к файлам")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Validator.py')
+    parser.add_argument(
+        '-i',
+        '-input',
+        type=str,
+        help='Аргумент, указывающий путь к файлу, который требуется проверить на валидность',
+        required=True,
+        dest='file_input')
+    parser.add_argument(
+        '-o',
+        '-output',
+        type=str,
+        help='Аргумент, указывающий путь к файлу, в который требуется записать валидные данные',
+        required=True,
+        dest='file_output')
+    args = parser.parse_args()
+    read_data_from = os.path.realpath(args.file_input)
+    write_valid_data_to = os.path.realpath(args.file_output)
+    try:
+        file = File(read_data_from)
+        with tqdm(file.data, desc='Заполняем словари мировоззрений, политических взглядов, профессий') as progressbar:
+            with open(write_valid_data_to, mode='w', encoding='windows-1251') as write_to_file:
+                for record in file.data:
+                    validate = Validator(
+                        str(
+                            record['email']), str(
+                            record['height']), str(
+                            record['snils']), str(
+                            record['passport_number']), str(
+                            record['occupation']), str(
+                                record['age']), str(
+                                    record['political_views']), str(
+                                        record['worldview']), str(
+                                            record['address']))
+                    validate.fill_political_views_dict()
+                    validate.fill_world_view_dict()
+                    validate.fill_occupation_view_dict()
+                    progressbar.update(1)
+        data_to_save = []
+        with tqdm(file.data, desc='Проверяем записи на соответствие критериям и записываем их в файл') as progressbar:
+            with open(write_valid_data_to, mode='wb') as write_to_file:
+                for record in file.data:
+                    validate = Validator(
+                        str(
+                            record['email']), str(
+                            record['height']), str(
+                            record['snils']), str(
+                            record['passport_number']), str(
+                            record['occupation']), str(
+                                record['age']), str(
+                                    record['political_views']), str(
+                                        record['worldview']), str(
+                                            record['address']))
+                    if validate.statistic_is_record_correct():
+                        record['height'] = float(record['height'])
+                        data_to_save.append(record)
+                    progressbar.update(1)
+                pickle.dump(data_to_save, write_to_file)
+        Validator.print_statistics()
+    except BaseException as ex:
+        print(ex)
+        print("Произошла ошибка, проверьте пути к файлам")
